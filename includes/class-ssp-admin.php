@@ -118,9 +118,6 @@ class MPP_Admin {
 			// Appreciation links.
 			add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 4 );
 
-			// Add footer text to dashboard.
-			add_filter( 'admin_footer_text', array( $this, 'admin_footer_text' ), 1 );
-
 			// Clear the cache on post save.
 			add_action( 'save_post', array( $this, 'invalidate_cache' ), 10, 2 );
 
@@ -1403,36 +1400,6 @@ HTML;
 
 		// Mark update as having been run
 		update_option( 'ssp_update_enclosures', 'run' );
-	}
-
-	/**
-	 * Add rating link to admin footer on MPP settings pages
-	 *
-	 * @param  string $footer_text Default footer text
-	 *
-	 * @return string              Modified footer text
-	 */
-	public function admin_footer_text( $footer_text ) {
-
-		// Check to make sure we're on a MPP settings page
-		if ( ( isset( $_GET['page'] ) && 'podcast_settings' == esc_attr( $_GET['page'] ) ) && apply_filters( 'ssp_display_admin_footer_text', true ) ) {
-
-			// Change the footer text
-			if ( ! get_option( 'ssp_admin_footer_text_rated' ) ) {
-				$footer_text = sprintf( __( 'If you like %1$sMedia Portfolios Podcasting%2$s please leave a %3$s&#9733;&#9733;&#9733;&#9733;&#9733;%4$s rating. A huge thank you in advance!', 'mps-podcasts' ), '<strong>', '</strong>', '<a href="https://wordpress.org/support/plugin/seriously-simple-podcasting/reviews/?rate=5#new-post" target="_blank" class="ssp-rating-link" data-rated="' . __( 'Thanks!', 'mps-podcasts' ) . '">', '</a>' );
-				$footer_text .= "<script type='text/javascript'>
-					jQuery('a.ssp-rating-link').click(function() {
-						jQuery.post( '" . admin_url( 'admin-ajax.php' ) . "', { action: 'ssp_rated' } );
-						jQuery(this).parent().text( jQuery(this).data( 'rated' ) );
-					});
-				</script>";
-			} else {
-				$footer_text = sprintf( __( '%1$sThank you for publishing with %2$sMedia Portfolios Podcasting%3$s.%4$s', 'mps-podcasts' ), '<span id="footer-thankyou">', '<a href="http://www.seriouslysimplepodcasting.com/" target="_blank">', '</a>', '</span>' );
-			}
-
-		}
-
-		return $footer_text;
 	}
 
 	/**

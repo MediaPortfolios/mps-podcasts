@@ -207,21 +207,6 @@ class MPP_Settings {
 			'settings_page',
 		) );
 
-		add_submenu_page( 'edit.php?post_type=podcast', __( 'Extensions', 'mps-podcasts' ), __( 'Extensions', 'mps-podcasts' ), 'manage_podcast', 'podcast_settings&tab=extensions', array(
-			$this,
-			'settings_page',
-		) );
-
-		/* @todo Add Back In When Doing New Analytics Pages */
-		/* add_submenu_page( 'edit.php?post_type=podcast', __( 'Analytics', 'mps-podcasts' ), __( 'Analytics', 'mps-podcasts' ), 'manage_podcast', 'podcast_settings&view=analytics', array(
-			 $this,
-			 'settings_page',
-		 ) );*/
-
-		add_submenu_page( null, __( 'Upgrade', 'mps-podcasts' ), __( 'Upgrade', 'mps-podcasts' ), 'manage_podcast', 'upgrade', array(
-			$this,
-			'show_upgrade_page',
-		) );
 	}
 
 	/**
@@ -1053,82 +1038,6 @@ class MPP_Settings {
 				),
 			),
 		);
-// @todo add back for analytics launch
-//		$settings['analytics'] = array(
-//			'title'       => __( 'Analytics', 'mps-podcasts' ),
-//			'description' => sprintf( __( 'Connect your %s analytics application with your podcast site' ), '<a target="_blank" href=" ' . MPP_PODMOTOR_APP_URL . '">Seriously Simple Hosting</a>' ),
-//			'fields'      => array(
-//				array(
-//					'id'          => 'ssp_analytics_token',
-//					'label'       => __( 'Analytics Token', 'mps-podcasts' ),
-//					'description' => '',
-//					'type'        => 'text',
-//					'callback'    => 'esc_url_raw',
-//					'class'       => 'regular-text',
-//				),
-//			),
-//		);
-
-		$settings['castos-hosting'] = array(
-			'title'       => __( 'Hosting', 'mps-podcasts' ),
-			'description' => sprintf( __( 'Connect your WordPress site to your %s account.', 'mps-podcasts' ), '<a target="_blank" href="' . MPP_PODMOTOR_APP_URL . '">Castos</a>' ),
-			'fields'      => array(
-				array(
-					'id'          => 'podmotor_account_email',
-					'label'       => __( 'Your email', 'mps-podcasts' ),
-					'description' => __( 'The email address you used to register your Castos account.', 'mps-podcasts' ),
-					'type'        => 'text',
-					'default'     => '',
-					'placeholder' => __( 'email@domain.com', 'mps-podcasts' ),
-					'callback'    => 'esc_email',
-					'class'       => 'regular-text',
-				),
-				array(
-					'id'          => 'podmotor_account_api_token',
-					'label'       => __( 'Castos API token', 'mps-podcasts' ),
-					'description' => __( 'Your Castos API token. Available from your Castos account dashboard.', 'mps-podcasts' ),
-					'type'        => 'text',
-					'default'     => '',
-					'placeholder' => __( 'Enter your api token', 'mps-podcasts' ),
-					'callback'    => 'sanitize_text_field',
-					'class'       => 'regular-text',
-				),
-				array(
-					'id'      => 'podmotor_account_id',
-					'type'    => 'hidden',
-					'default' => '',
-				),
-				array(
-					'id'              => 'podmotor_disconnect',
-					'label'           => __( 'Disconnect Castos', 'mps-podcasts' ),
-					'description'     => __( 'Disconnect your Castos account.', 'mps-podcasts' ),
-					'type'            => 'checkbox',
-					'default'         => '',
-					'callback'        => 'wp_strip_all_tags',
-					'class'           => 'disconnect-castos',
-				),
-			),
-		);
-
-		// @todo there has to be a better way to do this
-		if ( !ssp_is_connected_to_podcastmotor() ) {
-			$settings['castos-hosting']['fields'][3]['container_class'] = 'hidden';
-		}
-
-		if ( ssp_is_connected_to_podcastmotor() ) {
-			$settings['import'] = array(
-				'title'       => __( 'Import', 'mps-podcasts' ),
-				'description' => sprintf( __( 'Import and upload your externally hosted podcast files to your %s account.', 'mps-podcasts' ), '<a href="' . MPP_PODMOTOR_APP_URL . '">Castos</a>' ),
-				'fields'      => array(),
-			);
-		}
-
-		$settings['extensions'] = array(
-			'title'               => __( 'Extensions', 'mps-podcasts' ),
-			'description'         => __( 'These extensions add functionality to your Media Portfolios Podcasting powered podcast.', 'mps-podcasts' ),
-			'fields'              => array(),
-			'disable_save_button' => true,
-		);
 
 		$settings = apply_filters( 'ssp_settings_fields', $settings );
 
@@ -1788,8 +1697,6 @@ class MPP_Settings {
 
 		$html .= '</div>' . "\n";
 
-		$html .= $this->render_seriously_simple_sidebar();
-
 		$html .= '</div>' . "\n";
 
 		echo $html;
@@ -1876,13 +1783,6 @@ class MPP_Settings {
 		delete_option( $this->settings_base . 'podmotor_account_api_token' );
 		delete_option( $this->settings_base . 'podmotor_account_id' );
 		delete_option( $this->settings_base . 'podmotor_disconnect' );
-	}
-
-	public function render_seriously_simple_sidebar() {
-		$image_dir = $this->assets_url . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR;
-		ob_start();
-		include ( $this->templates_dir . DIRECTORY_SEPARATOR . 'settings-sidebar.php' );
-		return ob_get_clean();
 	}
 
 	public function render_seriously_simple_extensions() {
